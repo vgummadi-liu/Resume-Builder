@@ -2,6 +2,8 @@ import React, {useState,useContext} from "react";
 import {Alert,Button,TextField} from "@mui/material";
 import {Link,useNavigate} from "react-router-dom";
 import {Context as UserContext} from "../context/UserContext";
+import './Login.css';
+import "bootstrap/dist/css/bootstrap.min.css"
 import apis from '../api';
 
 const Login = () =>{
@@ -44,6 +46,53 @@ const Login = () =>{
     return(
         <div>
             {error.state ? <Alert severity="error">{error.message}</Alert>: null }
+            <div className="Auth-form-container">
+                
+      <form className="Auth-form" onSubmit={formSubmit}>
+        <div className="Auth-form-content">
+          <h3 className="Auth-form-title">Login In</h3>
+          <div className="form-group mt-3">
+            <label>UserName</label>
+            <input
+              type="email"
+              className="form-control mt-1"
+              placeholder="Enter email"
+              id="filled-basic"
+              label="username"
+              name="username"
+              variant="filled"
+              value={form.username}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+          <div className="form-group mt-3">
+            <label>Password</label>
+            <input
+              type="password"
+              className="form-control mt-1"
+              placeholder="Enter password"
+              id="filled-basic"
+              label="password"
+              variant="filled"
+              name="password"
+              required
+              value={form.password}
+              onChange={handleInputChange}
+            />
+          </div>
+          <div className="d-grid gap-2 mt-3">
+            <button type="submit" className="btn btn-primary">
+              Submit
+            </button>
+          </div>
+          <p className="forgot-password text-right mt-2">
+             <a href="#"> Forgot password?</a>
+          </p>
+        </div>
+      </form>
+    </div>
+{/*             
             <form onSubmit={formSubmit}>
             <TextField
                     id="filled-basic"
@@ -71,9 +120,16 @@ const Login = () =>{
                 <Button variant="contained" component={Link} to="/signup">
                     Signup
                 </Button>
-            </form>
+            </form> */}
+
+
         </div>
+
     );
 };
 
+
+
+
 export default Login;
+
