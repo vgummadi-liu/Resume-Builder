@@ -1,12 +1,15 @@
 const express = require('express')
 
-const UserCtrl = require('../controllers/user-ctrl')
+const controller = require('../controllers')
 
 const router = express.Router()
 
 
-router.post('/login', UserCtrl.checkUser)
-router.post('/user', UserCtrl.createUser)
+//register routes
+router.post('/register', controller.createUser );
+router.post('/login', controller.checkUser);
+router.post('/secret-route',controller.protectedRoute );
+
 
 // router.get('/user/:id', UserCtrl.getUserById)
 // router.post('/getall', UserCtrl.getAllbyId)

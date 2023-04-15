@@ -1,11 +1,31 @@
-const mongoose = require("mongoose");
+var mysql = require('mysql');
 
-mongoose
-  .connect("mongodb://127.0.0.1:27017/ResumeBuilder", { useNewUrlParser: true })
-  .catch((e) => {
-    console.error("Connection error", e.message)
-  })
+require('dotenv').config()
 
-const db = mongoose.connection
+// var conn = mysql.createConnection({
+//     host: process.env.DB_host,
+//     user: process.env.DB_user,
+//     password: process.env.DB_password,
+//     database: process.env.DB_Name,
+// });
 
-module.exports = db
+var conn = mysql.createConnection({
+    connectionLimit: 100,
+    host: process.env.DB_host,
+    user: process.env.DB_user,
+    password: process.env.DB_password,
+    database: process.env.DB_Name,
+    port: process.env.DB_port
+ });
+
+
+var db = conn.connect((err)=>{
+
+    if(err){
+        throw err;
+    }
+    console.log("Db connected!");
+});
+
+
+module.exports = conn;

@@ -1,0 +1,48 @@
+.layout{
+    height: 100vh;
+    padding: 30px 50px;
+}
+
+.header{
+    height: 10%;
+    
+    background-color: rgba(0, 0, 0, 0.85);
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+}
+.header h1{
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 22px;
+}
+.header button{
+    border: 1px solid white !important;
+    color: rgba(255, 255, 255, 0.589) !important;
+}
+.content{
+    height: 87%;
+    border: 1px solid gray;
+    margin-top: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.486);
+    padding: 10px;
+}
+
+.brand{
+    /* font-size: 250px !important;
+    position: absolute;
+    top: 30%;
+    width: 100%;
+    left: 0;
+    text-align: center;
+    transform: rotate(-10deg) !important;
+    color: rgba(0.25, 0.06, 0, 0.1);
+    transform: translate(-50% , -50%); */
+}
+/* @media only screen and (max-width:1000px){
+    .brand{
+        display: none;
+    }
+} */

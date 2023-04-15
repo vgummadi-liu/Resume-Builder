@@ -10,7 +10,7 @@ const apiPort = 3000
 
 const db = require('./db')
 
-const userRouter = require('./routes/user-route')
+const userRouter = require('./routes')
 
 app.use(bodyParser.urlencoded({ extended: true }))
 
@@ -18,7 +18,7 @@ app.use(cors())
 
 app.use(bodyParser.json())
 
-db.on('error', console.error.bind(console, 'MongoDB connection error:'))
+
 
 app.get('/', (req, res) => {
 
