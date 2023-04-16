@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button, Dropdown, Nav, Navbar } from "react-bootstrap";
 import { PersonFill } from "react-bootstrap-icons";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function Layout(props) {
    const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
