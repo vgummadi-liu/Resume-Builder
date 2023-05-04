@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route,Navigate, useNavigate } from "react-router
 import Intro from './pages/Intro';
 import Login from './pages/Login';
 import Register from './pages/SignUp';
+import Templates from './pages/templates';
 import Home from './pages/Home';
 import AboutUs from './pages/AboutUs';
 import Profile from './pages/Profile';
@@ -24,6 +25,7 @@ function App() {
           <Route path="/aboutUs" element = {<AboutUs />} />
           <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
           <Route path="/profile" element = {<ProtectedRoute> <Profile/></ProtectedRoute>} />
+          <Route path="/templates/:id" element={<ProtectedRoute><Templates /></ProtectedRoute>} />
           </Routes>
       </BrowserRouter>
     </div>

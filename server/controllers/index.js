@@ -11,6 +11,7 @@ const createUser  = async (req,res)=>{
     
         let{email,password}=req.body
         
+        
 
         let roleid = 2;
         //creating user object
@@ -135,7 +136,7 @@ const checkUser = (req,res)=>{
                        console.log("---------> Generating accessToken")
                        const id = result[0].id;
                        const token = jwt.sign({id},process.env.JWT_SECRET_KEY,{
-                        expiresIn: 300,
+                        expiresIn: 300000,
                         jwtid:result[0].email,
 
                        })
@@ -185,11 +186,11 @@ const verifyJWT = (req,res,next)=>{
   }
   else{
     jwt.verify(token,process.env.JWT_SECRET_KEY,(err,decoded)=>{
-      
+
       if(err){
         res.status(401).send({
           auth:false,
-          msg: "Failed to Authenticate",
+          //msg: "Failed to Authenticate",
           error: err
         })
       }
@@ -207,7 +208,7 @@ const verifyJWT = (req,res,next)=>{
 
 const updateProfile = (req,res)=>{
   const body = req.body;
-
+  console.log(body);
   const err = ProfileValidator.validateProfile(body);
 
   if(err){
@@ -304,6 +305,405 @@ const updateProfile = (req,res)=>{
   
 }
 
+const updateEducation = (req, res) => {
+  const body = req.body;
+  console.log(body);
+
+  const err = ProfileValidator.validateEducation(body);
+
+  if (err) {
+    return res.status(401).send({
+      msg: "Update Failed",
+      error: err,
+    });
+  }
+
+  const userEmail = req.user;
+
+  db.query(`SELECT userid from users where Email = ?`, userEmail, (err, result) => {
+    if (err) {
+      return res.status(400).send({
+        msg: err,
+      });
+    }
+
+    if (result.length == 0) {
+      return res.status(401).send({
+        msg: "NO User Registered with this email!",
+      });
+    } else {
+      const userid = result[0].userid;
+
+      body.forEach((education, index) => {
+        const {
+          id,
+          degree,
+          major,
+          school,
+          startDate,
+          endDate,
+          description
+        } = education;
+
+        const obj = {
+          userid: userid,
+          degree: degree,
+          Major: major,
+          school: school,
+          start_date: startDate,
+          end_date: endDate,
+          description: description
+        };
+
+        if (id) { // If education id exists, update the existing education record
+          db.query(`UPDATE Education SET ? WHERE id = ? AND userid = ?`, [obj, id, userid], (err, results) => {
+            if (err) {
+              return res.status(401).send({
+                msg: "Error while Updating the Education table",
+                error: err,
+              });
+            } else {
+              if (index == body.length - 1) {
+                return res.status(200).send({
+                  msg: "Updated Successfully",
+                });
+              }
+            }
+          });
+        } else { // If education id does not exist, insert a new education record
+          db.query(`INSERT INTO Education SET ?`, obj, (err, ans) => {
+            if (err) {
+              return res.status(401).send({
+                msg: "Error while Inserting into the Education table",
+                error: err,
+              });
+            } else {
+              if (index == body.length - 1) {
+                return res.status(200).send({
+                  msg: "Updated Successfully",
+                });
+              }
+            }
+          });
+        }
+      });
+    }
+  }); //end of query
+};
+
+
+const updateSkills = (req, res) => {
+  const body = req.body;
+  console.log(body);
+
+  const err = ProfileValidator.validateSkill(body);
+
+  if (err) {
+    return res.status(401).send({
+      msg: "Update Failed",
+      error: err,
+    });
+  }
+
+  const userEmail = req.user;
+
+  db.query(`SELECT userid from users where Email = ?`, userEmail, (err, result) => {
+
+    if (err) {
+      return res.status(400).send({
+        msg: err,
+      });
+    }
+
+    if (result.length == 0) {
+      return res.status(401).send({
+        msg: "NO User Registered with this email!",
+      });
+    } else {
+      const userid = result[0].userid;
+
+      body.forEach((skill, index) => {
+        const { name, rating } = skill;
+
+        // Check if the skill already exists in the database for this user
+        db.query(`SELECT id FROM Skill WHERE userid = ? AND name = ?`, [userid, name], (err, response) => {
+          if (err) {
+            return res.status(401).send({
+              msg: "Error while fetching the skill from the skill table",
+              error: err,
+            });
+          } else {
+            const obj = {
+              userid: userid,
+              name: name,
+              rating: rating
+            };
+
+            if (response.length == 0) {
+              // If the skill does not exist, insert it into the database
+              db.query(`INSERT INTO Skill SET ?`, obj, (err, ans) => {
+                if (err) {
+                  return res.status(401).send({
+                    msg: "Error while Inserting into the skill table",
+                    error: err,
+                  });
+                } else {
+                  if (index == body.length - 1) {
+                    return res.status(200).send({
+                      msg: "Updated Successfully",
+                    });
+                  }
+                }
+              });
+            } else {
+              // If the skill exists, update its rating in the database
+              db.query(`UPDATE Skill SET rating = ? WHERE userid = ? AND name = ?`, [rating, userid, name], (err, results) => {
+                if (err) {
+                  return res.status(401).send({
+                    msg: "Error while Updating the skill table",
+                    error: err,
+                  });
+                } else {
+                  if (index == body.length - 1) {
+                    return res.status(200).send({
+                      msg: "Updated Successfully",
+                    });
+                  }
+                }
+              });
+            }
+          }
+        });
+      });
+    }
+  });
+};
+
+const updateExperience = (req, res) => {
+  const body = req.body;
+  console.log(body);
+
+  const err = ProfileValidator.validateExperience(body);
+
+  if (err) {
+    return res.status(401).send({
+      msg: "Update Failed",
+      error: err,
+    });
+  }
+
+  const userEmail = req.user;
+
+  db.query(`SELECT userid from users where Email = ?`, userEmail, (err, result) => {
+    if (err) {
+      return res.status(400).send({
+        msg: err,
+      });
+    }
+
+    if (result.length == 0) {
+      return res.status(401).send({
+        msg: "NO User Registered with this email!",
+      });
+    } else {
+      const userid = result[0].userid;
+
+      body.forEach((experience, index) => {
+        const {
+          id,
+          title,
+          company,
+          location,
+          startDate,
+          endDate,
+          description
+        } = experience;
+
+        const obj = {
+          userid: userid,
+          title: title,
+          company: company,
+          location: location,
+          start_date: startDate,
+          end_date: endDate,
+          description: description
+        };
+
+        if (id) { // If education id exists, update the existing education record
+          db.query(`UPDATE Experience SET ? WHERE id = ? AND userid = ?`, [obj, id, userid], (err, results) => {
+            if (err) {
+              return res.status(401).send({
+                msg: "Error while Updating the Experience table",
+                error: err,
+              });
+            } else {
+              if (index == body.length - 1) {
+                return res.status(200).send({
+                  msg: "Updated Successfully",
+                });
+              }
+            }
+          });
+        } else { // If education id does not exist, insert a new education record
+          db.query(`INSERT INTO Experience SET ?`, obj, (err, ans) => {
+            if (err) {
+              return res.status(401).send({
+                msg: "Error while Inserting into the Education table",
+                error: err,
+              });
+            } else {
+              if (index == body.length - 1) {
+                return res.status(200).send({
+                  msg: "Updated Successfully",
+                });
+              }
+            }
+          });
+        }
+      });
+    }
+  }); //end of query
+};
+
+
+
+
+
+const getProfile = (req,res)=>{
+ 
+
+  var userid = 0;
+
+  db.query(`SELECT userid from users where Email = ?`,req.user,(err,result)=>{
+    if(err){
+        return res.status(400).send({ 
+            msg:err
+        })
+    }
+    if(result.length == 0){
+     
+      return res.status(401).send({
+        msg: 'NO User Registered with this email!'
+      });
+    
+  }
+  else{
+    userid = result[0].userid;
+    
+db.query(`SELECT * FROM profile WHERE userid = ?`, userid, (error, results) => {
+  if (error) {
+    console.error('Error:', error);
+    return res.status(500).send('Error retrieving user profile.');
+  }
+  console.log(results)
+  if (results.length === 0) {
+    // No profile data found for the user
+    return res.status(404).send('User profile not found.');
+  }
+
+  const profile = {
+    first_name: results[0].first_name,
+    last_name: results[0].last_name,
+    mobile_number: results[0].mobile_number,
+    portfolio: results[0].portfolio,
+    address: results[0].address,
+    carrier_objective: results[0].carrier_objective
+  };
+
+  res.json(profile);
+});
+
+
+  }
+    
+});
+
+}
+
+const getEducation = (req, res) => {
+  var userid = 0;
+
+  db.query(`SELECT userid from users where Email = ?`, req.user, (err, result) => {
+    if (err) {
+      return res.status(400).send({ 
+        msg:err
+      })
+    }
+    if (result.length == 0) {
+      return res.status(401).send({
+        msg: 'NO User Registered with this email!'
+      });
+    } else {
+      userid = result[0].userid;
+      db.query(`SELECT * FROM Education WHERE userid = ?`, userid, (error, results) => {
+        if (error) {
+          console.error('Error:', error);
+          return res.status(500).send('Error retrieving user education.');
+        }
+        console.log(results);
+        
+        res.json(results);
+      });
+    }
+  });
+}
+
+const getSkills = (req, res) => {
+  var userid = 0;
+
+  db.query(`SELECT userid from users where Email = ?`, req.user, (err, result) => {
+    if (err) {
+      return res.status(400).send({ 
+        msg:err
+      })
+    }
+    if (result.length == 0) {
+      return res.status(401).send({
+        msg: 'NO User Registered with this email!'
+      });
+    } else {
+      userid = result[0].userid;
+      db.query(`SELECT * FROM Skill WHERE userid = ?`, userid, (error, results) => {
+        if (error) {
+          console.error('Error:', error);
+          return res.status(500).send('Error retrieving user skills.');
+        }
+        console.log(results);
+        res.json(results);
+      });
+    }
+  });
+}
+
+const getExperience = (req, res) => {
+  var userid = 0;
+
+  db.query(`SELECT userid from users where Email = ?`, req.user, (err, result) => {
+    if (err) {
+      return res.status(400).send({ 
+        msg:err
+      })
+    }
+    if (result.length == 0) {
+      return res.status(401).send({
+        msg: 'NO User Registered with this email!'
+      });
+    } else {
+      userid = result[0].userid;
+      db.query(`SELECT * FROM Experience WHERE userid = ?`, userid, (error, results) => {
+        if (error) {
+          console.error('Error:', error);
+          return res.status(500).send('Error retrieving user experience.');
+        }
+        console.log(results);
+        
+        res.json(results);
+      });
+    }
+  });
+}
+
+
 const protectedRoute = (req,res)=>{
 
   res.send({
@@ -317,5 +717,12 @@ module.exports = {
     createUser,
     checkUser,
     protectedRoute,
-    verifyJWT,updateProfile
+    verifyJWT,updateProfile,
+    getProfile,
+    updateEducation,
+    updateSkills,
+    updateExperience,
+    getEducation,
+    getExperience,
+    getSkills
 }
