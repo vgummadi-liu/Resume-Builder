@@ -3,6 +3,7 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { Alert, Spinner } from "react-bootstrap";
 import { FormControl } from "react-bootstrap";
+import jwt_decode from 'jwt-decode';
 
 import '../resources/Auth.css'
 import { Link, useNavigate } from "react-router-dom";
@@ -68,6 +69,7 @@ const Login = ()=>{
         console.log(response.data)
         if(response.data.auth === true){
             localStorage.setItem('token', response.data.token)
+
             //console.log("result is ",response.data.result);
             localStorage.setItem('user',JSON.stringify(response.data.result))
             console.log(localStorage.getItem('user'))

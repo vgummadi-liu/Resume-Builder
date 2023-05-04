@@ -1,7 +1,7 @@
 import React from 'react'
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { BrowserRouter, Routes, Route,Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route,Navigate, useNavigate } from "react-router-dom";
 import Intro from './pages/Intro';
 import Login from './pages/Login';
 import Register from './pages/SignUp';
@@ -11,6 +11,8 @@ import Profile from './pages/Profile';
 
 
 function App() {
+  
+  
 
   return (
     <div className='App'>
@@ -33,7 +35,8 @@ function App() {
 export default App;
 
 export function ProtectedRoute(props) {
-  if (localStorage.getItem("token")) {
+
+  if (localStorage.getItem("token") ) {
     return props.children;
   } else {
     return <Navigate to="/login" />;
