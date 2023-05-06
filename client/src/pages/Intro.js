@@ -1,17 +1,21 @@
-import React from 'react'
+import React from 'react';
+import { Link } from 'react-router-dom';
 import '../resources/intro.css';
 
 import { Button,Stack } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Layout from '../components/Layout';
 
 
 
 const Intro = ()=>{
     return (
-
         <div className='App-header'>
           <div className='App'>
+            <h3><strong><Link to="/Aboutus">Know About US </Link></strong></h3>
           <h1> Resume Builder Application </h1>
+
+
           
           
           <Stack direction="horizontal" gap={2} >
@@ -32,8 +36,6 @@ const Intro = ()=>{
             
     
         </div>
-    
-        
         
         );
     

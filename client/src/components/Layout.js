@@ -6,6 +6,8 @@ import { PersonFill } from "react-bootstrap-icons";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function Layout(props) {
+
+
    const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
   const history = useNavigate();
 
@@ -15,15 +17,24 @@ function Layout(props) {
   };
 
   const username = user.email.split('@')[0];
+  const role = user.role;
 
   const Menu = (
     <Dropdown>
     <Dropdown.Toggle variant="secondary" id="dropdown-basic">
       <PersonFill /> {username}
     </Dropdown.Toggle>
+    
     <Dropdown.Menu>
-      <Dropdown.Item as={Link} to="/profile">Profile</Dropdown.Item>
-      <Dropdown.Divider />
+    {role === 'client' && (
+          <>
+            <Dropdown.Item as={Link} to="/profile">
+              Profile
+            </Dropdown.Item>
+            <Dropdown.Divider />
+          </>
+        )}
+
       <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
     </Dropdown.Menu>
   </Dropdown>

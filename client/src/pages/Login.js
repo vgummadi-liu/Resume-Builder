@@ -66,15 +66,25 @@ const Login = ()=>{
         const response = await axios.post('http://localhost:3000/api/login', payload);
         setLoading(false);
         console.log("Registration Successful")
-        console.log(response.data)
+        
         if(response.data.auth === true){
             localStorage.setItem('token', response.data.token)
 
             //console.log("result is ",response.data.result);
             localStorage.setItem('user',JSON.stringify(response.data.result))
-            console.log(localStorage.getItem('user'))
+            var user = JSON.parse(response.data.result);
             alert("Login Success");
+            
+            if(user.role === 'Admin'){
+              navigate('/Admin');
+            }
+            else{
+              
             navigate('/home')
+
+            }
+            
+            
         }
         // alert("Registered Successfully!")
         // navigate('/login')
