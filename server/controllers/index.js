@@ -713,6 +713,121 @@ const protectedRoute = (req,res)=>{
 
 }
 
+const getAllUsers = async (req,res)=>{
+  try{
+    const role = req.user.split('@')[0];
+
+    if(role !== "Admin"){
+      return res.status(403).send({message: 'Unauthorized Access'});
+    }
+    db.query(`SELECT * FROM users where roleid != 1`,(errors,results)=>{
+      if (errors) {
+        console.error('Error:', errors);
+        return res.status(500).send('Error retrieving user experience.');
+      }
+      console.log(results);
+      
+      res.json(results);
+    })
+  }
+  catch(error){
+    console.log(error);
+    res.status(500).send({msg:"Internal Server Error"})
+  }
+}
+
+const deleteUsers =(req,res)=>{
+  const { userid } = req.params;
+  
+  try{
+    const role = req.user.split('@')[0];
+
+    if(role !== "Admin"){
+      return res.status(403).send({message: 'Unauthorized Access'});
+    }
+    db.beginTransaction(function (err) {
+      if (err) throw err;
+    
+      // Step 1: Delete records from the dependent tables
+      db.query('DELETE FROM Skill WHERE userid = ?', [userid], function (
+        err,
+        results
+      ) {
+        if (err) {
+          db.rollback(function () {
+            throw err;
+          });
+        }
+    
+        db.query('DELETE FROM Education WHERE userid = ?', [userid], function (
+          err,
+          results
+        ) {
+          if (err) {
+            db.rollback(function () {
+              throw err;
+            });
+          }
+    
+          db.query('DELETE FROM Experience WHERE userid = ?', [userid], function (
+            err,
+            results
+          ) {
+            if (err) {
+              db.rollback(function () {
+                throw err;
+              });
+            }
+    
+            db.query('DELETE FROM Profile WHERE userid = ?', [userid], function (
+              err,
+              results
+            ) {
+              if (err) {
+                db.rollback(function () {
+                  throw err;
+                });
+              }
+    
+              // Step 2: Delete the user record from the users table
+              db.query('DELETE FROM users WHERE userid = ?', [userid], function (
+                err,
+                results
+              ) {
+                if (err) {
+                  db.rollback(function () {
+                    throw err;
+                  });
+                }
+    
+                db.commit(function (err) {
+                  if (err) {
+                    db.rollback(function () {
+                      throw err;
+                    });
+                  }
+    
+                  console.log('User data deleted successfully.');
+                  res.status(200).send({
+                    msg: "User data deleted successfully."
+                  })
+                  db.end();
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+  }
+  catch(error){
+    console.log(error);
+    res.status(500).send({msg:"Internal Server Error"})
+  }
+  
+
+}
+
 module.exports = {
     createUser,
     checkUser,
@@ -724,5 +839,7 @@ module.exports = {
     updateExperience,
     getEducation,
     getExperience,
-    getSkills
+    getSkills,
+    getAllUsers,
+    deleteUsers 
 }
